@@ -20,6 +20,10 @@ export default function Hero() {
   const mouseX = useSpring(0, { damping: 20, stiffness: 100 });
   const mouseY = useSpring(0, { damping: 20, stiffness: 100 });
 
+  // Defining transforms at the top level to avoid hook rule violations
+  const xMouseParallax = useTransform(mouseX, x => x * -1.2);
+  const yMouseParallax = useTransform(mouseY, y => y * -1.2);
+
   const handleMouseMove = (e) => {
     if (isMobile) return;
     const { clientX, clientY } = e;
@@ -127,8 +131,8 @@ export default function Hero() {
             y: yParallax, 
             opacity: opacityFade,
             scale: scaleEffect,
-            x: isMobile ? 0 : useTransform(mouseX, x => x * -1.2),
-            y: isMobile ? 0 : useTransform(mouseY, y => y * -1.2),
+            x: isMobile ? 0 : xMouseParallax,
+            y: isMobile ? 0 : yMouseParallax,
             order: isMobile ? -1 : 1
           }}
         >

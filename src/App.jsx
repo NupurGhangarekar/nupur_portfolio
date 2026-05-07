@@ -36,12 +36,13 @@ export default function App() {
 
       <CustomCursor />
 
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {loaded && (
           <motion.div 
+            key="main-content"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 2.5, ease: [0.23, 1, 0.32, 1] }}
+            transition={{ duration: 1.5, ease: [0.23, 1, 0.32, 1] }}
             style={{ position: 'relative', zIndex: 1 }}
           >
             <Navbar />
