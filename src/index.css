@@ -1,0 +1,196 @@
+:root {
+  /* Color Palette - Cinematic & Atmospheric */
+  --bg-primary: #080808;
+  --bg-secondary: #0c0c0c;
+  --text-primary: #fffffb;
+  --text-secondary: rgba(255, 255, 251, 0.6);
+  --accent-lavender: #b5a4db;
+  --accent-blue: #8ba8b8;
+  --accent-beige: #d6cfc7;
+  
+  /* Glassmorphism & Depth */
+  --glass-bg: rgba(255, 255, 251, 0.03);
+  --glass-border: rgba(255, 255, 251, 0.08);
+  --glow-lavender: rgba(181, 164, 219, 0.15);
+  
+  /* Typography */
+  --font-serif: 'Instrument Serif', serif;
+  --font-sans: 'Satoshi', 'General Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  cursor: none !important;
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  overflow-x: hidden;
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  background-color: var(--bg-primary);
+}
+
+/* Atmospheric Noise Texture */
+.noise-texture {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* Floating Gradient Orbs */
+.gradient-orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(100px);
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.3;
+}
+
+.orb-1 {
+  width: 60vw;
+  height: 60vw;
+  background: radial-gradient(circle, var(--accent-lavender) 0%, transparent 70%);
+  top: -20%;
+  right: -10%;
+  animation: orbMove 25s infinite alternate ease-in-out;
+}
+
+.orb-2 {
+  width: 50vw;
+  height: 50vw;
+  background: radial-gradient(circle, var(--accent-blue) 0%, transparent 70%);
+  bottom: -10%;
+  left: -10%;
+  animation: orbMove 20s infinite alternate-reverse ease-in-out;
+}
+
+@keyframes orbMove {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(50px, 100px) scale(1.1); }
+}
+
+/* Typography Scale */
+.heading-xl {
+  font-family: var(--font-serif);
+  font-size: clamp(4rem, 12vw, 10rem);
+  font-weight: 400;
+  line-height: 0.85;
+  letter-spacing: -0.04em;
+}
+
+.heading-lg {
+  font-family: var(--font-serif);
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 400;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+}
+
+.heading-md {
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 400;
+}
+
+.section-tag {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.4em;
+  color: var(--accent-lavender);
+  opacity: 0.8;
+}
+
+.section-tag::before {
+  content: '';
+  width: 40px;
+  height: 1px;
+  background: var(--accent-lavender);
+  opacity: 0.5;
+}
+
+/* Premium Button */
+.btn-editorial {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 1.2rem 3.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  text-decoration: none;
+  background: transparent;
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(10px);
+  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  overflow: hidden;
+}
+
+.btn-editorial::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 251, 0.1), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.btn-editorial:hover {
+  border-color: var(--accent-lavender);
+  box-shadow: 0 0 30px rgba(181, 164, 219, 0.2);
+  transform: translateY(-2px);
+}
+
+.btn-editorial:hover::before {
+  transform: translateX(100%);
+}
+
+/* Glass Card */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 2px;
+  transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* Scroll Progress Line */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent-lavender), var(--accent-blue));
+  transform-origin: 0%;
+  z-index: 10001;
+}
+
+/* Asymmetric Grid Spacing */
+section {
+  padding: 15rem 5vw;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  section { padding: 10rem 1.5rem; }
+}
