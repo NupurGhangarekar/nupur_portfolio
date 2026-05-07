@@ -1,6 +1,6 @@
-import { motion, useMotionValue, useSpring } from 'framer-motion';
+import { motion, useMotionValue } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const experiences = [
   {
