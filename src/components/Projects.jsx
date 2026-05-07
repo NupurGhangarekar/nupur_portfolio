@@ -1,5 +1,5 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 const works = [
@@ -45,7 +45,7 @@ const works = [
   },
 ];
 
-function WorkItem({ work, index }) {
+function WorkItem({ work, index, isMobile }) {
   const containerRef = useRef(null);
   const [inViewRef, inView] = useInView({ threshold: 0.2, triggerOnce: false });
   const isEven = index % 2 === 0;
@@ -55,9 +55,9 @@ function WorkItem({ work, index }) {
     offset: ["start end", "end start"]
   });
 
-  const yParallax = useTransform(scrollYProgress, [0, 1], [80, -80]);
+  const yParallax = useTransform(scrollYProgress, [0, 1], [isMobile ? 0 : 80, isMobile ? 0 : -80]);
   const imageReveal = useTransform(scrollYProgress, [0, 0.3], ["inset(100% 0 0 0)", "inset(0% 0 0 0)"]);
-  const glowOpacity = useTransform(scrollYProgress, [0, 0.4, 0.6, 1], [0, 1, 1, 0]);
+  const glowOpacity = useTransform(scrollYProgress, [0, 0.4, 0.6, 1], [0, isMobile ? 0.5 : 1, isMobile ? 0.5 : 1, 0]);
 
   return (
     <div
@@ -66,10 +66,10 @@ function WorkItem({ work, index }) {
         inViewRef(el);
       }}
       style={{
-        marginBottom: '30rem',
+        marginBottom: isMobile ? '10rem' : '30rem',
         display: 'grid',
-        gridTemplateColumns: isEven ? '1.2fr 1fr' : '1fr 1.2fr',
-        gap: '10vw',
+        gridTemplateColumns: isMobile ? '1fr' : (isEven ? '1.2fr 1fr' : '1fr 1.2fr'),
+        gap: isMobile ? '3rem' : '10vw',
         alignItems: 'center',
         position: 'relative'
       }}
@@ -78,22 +78,22 @@ function WorkItem({ work, index }) {
       <motion.div 
         style={{
           position: 'absolute',
-          width: '50vw',
-          height: '50vw',
+          width: isMobile ? '100vw' : '50vw',
+          height: isMobile ? '100vw' : '50vw',
           background: `radial-gradient(circle, ${work.glow} 0%, transparent 70%)`,
-          left: isEven ? '-15%' : 'auto',
-          right: isEven ? 'auto' : '-15%',
-          top: '-5%',
+          left: isMobile ? '-10%' : (isEven ? '-15%' : 'auto'),
+          right: isMobile ? 'auto' : (isEven ? 'auto' : '-15%'),
+          top: isMobile ? '-20%' : '-5%',
           pointerEvents: 'none',
           zIndex: 0,
           opacity: glowOpacity,
-          filter: 'blur(100px)'
+          filter: isMobile ? 'blur(60px)' : 'blur(100px)'
         }} 
       />
 
       <motion.div
         style={{ 
-          order: isEven ? 1 : 2, 
+          order: isMobile ? 1 : (isEven ? 1 : 2), 
           position: 'relative', 
           zIndex: 2, 
           y: yParallax 
@@ -102,11 +102,11 @@ function WorkItem({ work, index }) {
         <motion.div 
           className="editorial-frame" 
           style={{ 
-            aspectRatio: '16/11', 
-            boxShadow: '0 40px 80px rgba(0,0,0,0.6)',
+            aspectRatio: isMobile ? '4/3' : '16/11', 
+            boxShadow: '0 30px 60px rgba(0,0,0,0.6)',
             overflow: 'hidden',
             borderRadius: '2px',
-            clipPath: imageReveal
+            clipPath: isMobile ? 'none' : imageReveal
           }}
         >
           {work.style === 'lab' && (
@@ -119,7 +119,7 @@ function WorkItem({ work, index }) {
           )}
           
           <motion.img 
-            whileHover={{ scale: 1.04 }}
+            whileHover={isMobile ? {} : { scale: 1.04 }}
             transition={{ duration: 1, ease: [0.23, 1, 0.32, 1] }}
             src={work.image} 
             alt={work.title} 
@@ -139,14 +139,14 @@ function WorkItem({ work, index }) {
         whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
         viewport={{ once: true }}
         transition={{ duration: 1.5, ease: [0.23, 1, 0.32, 1], delay: 0.2 }}
-        style={{ order: isEven ? 2 : 1, position: 'relative', zIndex: 3 }}
+        style={{ order: isMobile ? 2 : (isEven ? 2 : 1), position: 'relative', zIndex: 3 }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem', marginBottom: '2rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
           <span style={{
             fontFamily: 'var(--font-mono)',
             fontSize: '0.6rem',
             color: work.accent,
-            letterSpacing: '0.3em',
+            letterSpacing: '0.2em',
             textTransform: 'uppercase',
             opacity: 0.7
           }}>
@@ -155,28 +155,29 @@ function WorkItem({ work, index }) {
           <div style={{ flex: 1, height: '1px', background: 'var(--glass-border)' }} />
         </div>
         
-        <h3 className="heading-md" style={{ marginBottom: '2.5rem', fontStyle: 'italic', fontSize: '3.5rem' }}>
+        <h3 className="heading-md" style={{ marginBottom: isMobile ? '1.5rem' : '2.5rem', fontStyle: 'italic', fontSize: isMobile ? '2.5rem' : '3.5rem' }}>
           {work.title}
         </h3>
         
         <p style={{
           fontFamily: 'var(--font-sans)',
-          fontSize: '1.2rem',
+          fontSize: isMobile ? '1rem' : '1.2rem',
           color: 'var(--text-secondary)',
           lineHeight: 1.8,
-          marginBottom: '5rem',
+          marginBottom: isMobile ? '3rem' : '5rem',
           maxWidth: '460px'
         }}>
           {work.description}
         </p>
         
         <motion.a 
-          whileHover={{ scale: 1.02 }}
+          whileHover={isMobile ? {} : { scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           href="https://github.com/NupurGhangarekar" 
           target="_blank"
           rel="noopener noreferrer"
           className="btn-editorial"
+          style={{ width: isMobile ? '100%' : 'auto', textAlign: 'center' }}
         >
           Project Details
         </motion.a>
@@ -186,6 +187,15 @@ function WorkItem({ work, index }) {
 }
 
 export default function Projects() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   return (
     <section id="projects" style={{ position: 'relative' }}>
       <div style={{ maxWidth: 1300, margin: '0 auto' }}>
@@ -194,14 +204,14 @@ export default function Projects() {
           whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           viewport={{ once: true }}
           transition={{ duration: 1.8 }}
-          style={{ marginBottom: '18rem', textAlign: 'center' }}
+          style={{ marginBottom: isMobile ? '8rem' : '18rem', textAlign: 'center' }}
         >
-          <span className="section-tag" style={{ justifyContent: 'center', marginBottom: '4rem' }}>02 — Selected Work</span>
+          <span className="section-tag" style={{ justifyContent: 'center', marginBottom: isMobile ? '2rem' : '4rem' }}>02 — Selected Work</span>
           <h2 className="heading-xl">Strategic <br /><span className="text-italic" style={{ color: 'var(--accent-lavender)' }}>development.</span></h2>
         </motion.div>
 
         {works.map((work, i) => (
-          <WorkItem key={work.id} work={work} index={i} />
+          <WorkItem key={work.id} work={work} index={i} isMobile={isMobile} />
         ))}
       </div>
     </section>

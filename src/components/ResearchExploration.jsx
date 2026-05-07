@@ -1,5 +1,5 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 
 const researchTopics = [
   {
@@ -21,32 +21,52 @@ const researchTopics = [
 
 export default function ResearchExploration() {
   const containerRef = useRef(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"]
   });
 
-  const xParallax = useTransform(scrollYProgress, [0, 1], [-80, 80]);
+  const xParallax = useTransform(scrollYProgress, [0, 1], [-80, isMobile ? 20 : 80]);
 
   return (
     <section 
       id="research" 
       ref={containerRef}
-      style={{ backgroundColor: 'var(--bg-secondary)', overflow: 'hidden', padding: '20rem 5vw' }}
+      style={{ 
+        backgroundColor: 'var(--bg-secondary)', 
+        overflow: 'hidden', 
+        padding: isMobile ? '8rem 5vw' : '20rem 5vw' 
+      }}
     >
       {/* Cinematic Horizontal Parallax Text Overlay */}
-      <motion.div 
-        style={{
-          position: 'absolute', top: '8%', right: '0', x: xParallax,
-          fontFamily: 'var(--font-serif)', fontSize: '15vw', color: 'rgba(181, 164, 219, 0.015)',
-          fontStyle: 'italic', zIndex: 0, pointerEvents: 'none', whiteSpace: 'nowrap'
-        }}
-      >
-        Research & Analysis
-      </motion.div>
+      {!isMobile && (
+        <motion.div 
+          style={{
+            position: 'absolute', top: '8%', right: '0', x: xParallax,
+            fontFamily: 'var(--font-serif)', fontSize: '15vw', color: 'rgba(181, 164, 219, 0.015)',
+            fontStyle: 'italic', zIndex: 0, pointerEvents: 'none', whiteSpace: 'nowrap'
+          }}
+        >
+          Research & Analysis
+        </motion.div>
+      )}
 
       <div style={{ maxWidth: 1200, margin: '0 auto', position: 'relative', zIndex: 1 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.3fr', gap: '12rem', alignItems: 'start' }}>
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: isMobile ? '1fr' : '1fr 1.3fr', 
+          gap: isMobile ? '4rem' : '12rem', 
+          alignItems: 'start' 
+        }}>
 
           {/* Left: Sticky Header */}
           <motion.div
@@ -54,15 +74,15 @@ export default function ResearchExploration() {
             whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
             viewport={{ once: true }}
             transition={{ duration: 1.8, ease: [0.23, 1, 0.32, 1] }}
-            style={{ position: 'sticky', top: '150px' }}
+            style={{ position: isMobile ? 'static' : 'sticky', top: '150px' }}
           >
-            <span className="section-tag" style={{ marginBottom: '4rem' }}>04 — Research Focus</span>
-            <h2 className="heading-lg" style={{ marginBottom: '4rem' }}>
+            <span className="section-tag" style={{ marginBottom: isMobile ? '2.5rem' : '4rem' }}>04 — Research Focus</span>
+            <h2 className="heading-lg" style={{ marginBottom: isMobile ? '2.5rem' : '4rem' }}>
               Specialized <br />
               <span className="text-italic" style={{ color: 'var(--accent-blue)' }}>technical </span> <br />
               analysis.
             </h2>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '1.2rem', maxWidth: '400px', lineHeight: 1.8, opacity: 0.8 }}>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', maxWidth: '400px', lineHeight: 1.8, opacity: 0.8 }}>
               Investigating the technical foundations of medical data processing, where advanced algorithms meet clinical diagnostic requirements.
             </p>
           </motion.div>
@@ -72,34 +92,34 @@ export default function ResearchExploration() {
             {researchTopics.map((item, index) => (
               <motion.div
                 key={item.title}
-                initial={{ opacity: 0, y: 40, filter: 'blur(12px)' }}
+                initial={{ opacity: 0, y: 30, filter: 'blur(12px)' }}
                 whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
                 viewport={{ once: true }}
                 transition={{ duration: 1.5, delay: index * 0.25, ease: [0.23, 1, 0.32, 1] }}
                 style={{
-                  padding: '5rem 0',
+                  padding: isMobile ? '3rem 0' : '5rem 0',
                   borderBottom: '1px solid var(--glass-border)',
                   position: 'relative'
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1.8rem', marginBottom: '2.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: isMobile ? '1.5rem' : '2.5rem' }}>
                    <span style={{
                     fontFamily: 'var(--font-mono)',
-                    fontSize: '0.65rem',
+                    fontSize: '0.6rem',
                     color: 'var(--accent-lavender)',
-                    letterSpacing: '0.3em',
+                    letterSpacing: '0.2em',
                     textTransform: 'uppercase',
                     opacity: 0.7
                   }}>
                     {item.tag}
                   </span>
-                  <div style={{ width: '30px', height: '1px', background: 'var(--accent-lavender)', opacity: 0.2 }} />
+                  <div style={{ width: '20px', height: '1px', background: 'var(--accent-lavender)', opacity: 0.2 }} />
                 </div>
                 
-                <h3 className="heading-md" style={{ marginBottom: '2.5rem', fontStyle: 'italic', fontSize: '2.8rem' }}>{item.title}</h3>
+                <h3 className="heading-md" style={{ marginBottom: isMobile ? '1.5rem' : '2.5rem', fontStyle: 'italic', fontSize: isMobile ? '2rem' : '2.8rem' }}>{item.title}</h3>
                 <p style={{
                   fontFamily: 'var(--font-sans)',
-                  fontSize: '1.15rem',
+                  fontSize: '1.05rem',
                   color: 'var(--text-secondary)',
                   lineHeight: 1.8,
                   maxWidth: '520px',

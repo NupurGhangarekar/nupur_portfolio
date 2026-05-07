@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
+import { useState, useEffect } from 'react';
 
 const impact = [
   {
@@ -21,32 +22,44 @@ const impact = [
 
 export default function LeadershipCommunity() {
   const [ref, inView] = useInView({ threshold: 0.1, triggerOnce: true });
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   return (
-    <section id="leadership" style={{ padding: '18rem 5vw' }}>
+    <section id="leadership" style={{ padding: isMobile ? '8rem 5vw' : '18rem 5vw' }}>
       <div style={{ maxWidth: 1200, margin: '0 auto' }}>
         <motion.div 
           initial={{ opacity: 0, y: 30, filter: 'blur(10px)' }}
           whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           viewport={{ once: true }}
           transition={{ duration: 1.8 }}
-          style={{ marginBottom: '10rem' }}
+          style={{ marginBottom: isMobile ? '5rem' : '10rem' }}
         >
-          <span className="section-tag" style={{ marginBottom: '4rem' }}>05 — Leadership & Community</span>
+          <span className="section-tag" style={{ marginBottom: isMobile ? '2rem' : '4rem' }}>05 — Leadership & Community</span>
           <h2 className="heading-xl">Collaborative <br /><span className="text-italic" style={{ color: 'var(--accent-lavender)' }}>engagement.</span></h2>
         </motion.div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '4rem' }}>
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(320px, 1fr))', 
+          gap: isMobile ? '2.5rem' : '4rem' 
+        }}>
           {impact.map((item, index) => (
             <motion.div
               key={item.role}
               ref={ref}
-              initial={{ opacity: 0, y: 40, filter: 'blur(12px)' }}
+              initial={{ opacity: 0, y: 30, filter: 'blur(12px)' }}
               animate={inView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
               transition={{ duration: 1.5, delay: index * 0.2, ease: [0.23, 1, 0.32, 1] }}
-              whileHover={{ y: -8, borderColor: 'rgba(181, 164, 219, 0.25)' }}
+              whileHover={isMobile ? {} : { y: -8, borderColor: 'rgba(181, 164, 219, 0.25)' }}
               style={{
-                padding: '4rem 3rem',
+                padding: isMobile ? '3rem 2rem' : '4rem 3rem',
                 backgroundColor: 'rgba(255, 255, 251, 0.012)',
                 border: '1px solid var(--glass-border)',
                 borderRadius: '2px',
@@ -59,7 +72,7 @@ export default function LeadershipCommunity() {
               }}
             >
               <div style={{
-                position: 'absolute', top: 0, left: 0, width: '3px', height: '0%',
+                position: 'absolute', top: 0, left: 0, width: isMobile ? '0' : '3px', height: '0%',
                 background: 'var(--accent-lavender)',
                 transition: 'height 0.5s ease'
               }} className="card-indicator" />
@@ -70,19 +83,19 @@ export default function LeadershipCommunity() {
 
               <h4 style={{
                 fontFamily: 'var(--font-mono)',
-                fontSize: '0.65rem',
+                fontSize: '0.6rem',
                 color: 'var(--accent-lavender)',
-                letterSpacing: '0.25em',
-                marginBottom: '1.8rem',
+                letterSpacing: '0.2em',
+                marginBottom: '1.2rem',
                 textTransform: 'uppercase',
                 opacity: 0.7
               }}>
                 {item.organization}
               </h4>
-              <h3 className="heading-md" style={{ marginBottom: '2rem', color: 'var(--text-primary)', fontStyle: 'italic', letterSpacing: '-0.01em', fontSize: '2.2rem' }}>{item.role}</h3>
+              <h3 className="heading-md" style={{ marginBottom: '1.5rem', color: 'var(--text-primary)', fontStyle: 'italic', letterSpacing: '-0.01em', fontSize: isMobile ? '1.8rem' : '2.2rem' }}>{item.role}</h3>
               <p style={{
                 fontFamily: 'var(--font-sans)',
-                fontSize: '1.1rem',
+                fontSize: '1.05rem',
                 color: 'var(--text-secondary)',
                 lineHeight: 1.7,
                 flex: 1,

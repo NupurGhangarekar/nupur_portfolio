@@ -132,21 +132,30 @@ function ExperienceCard({ exp, index }) {
 }
 
 export default function Experience() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   return (
-    <section id="experience" style={{ padding: '18rem 5vw' }}>
+    <section id="experience" style={{ padding: isMobile ? '8rem 5vw' : '18rem 5vw' }}>
       <div style={{ maxWidth: 1200, margin: '0 auto' }}>
         <motion.div
           initial={{ opacity: 0, y: 30, filter: 'blur(10px)' }}
           whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           viewport={{ once: true }}
           transition={{ duration: 1.8 }}
-          style={{ marginBottom: '10rem' }}
+          style={{ marginBottom: isMobile ? '5rem' : '10rem' }}
         >
           <span className="section-tag">03 — Professional Experience</span>
           <h2 className="heading-xl">Applied <br /><span className="text-italic" style={{ color: 'var(--accent-lavender)' }}>expertise.</span></h2>
         </motion.div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(440px, 1fr))', gap: '4rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(440px, 1fr))', gap: isMobile ? '2.5rem' : '4rem' }}>
           {experiences.map((exp, idx) => (
             <ExperienceCard key={exp.org} exp={exp} index={idx} />
           ))}

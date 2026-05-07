@@ -4,15 +4,24 @@ import { useRef, useState, useEffect } from 'react';
 export default function Hero() {
   const containerRef = useRef(null);
   const { scrollY } = useScroll();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
   
-  const yParallax = useTransform(scrollY, [0, 800], [0, 250]);
+  const yParallax = useTransform(scrollY, [0, 800], [0, isMobile ? 50 : 250]);
   const opacityFade = useTransform(scrollY, [0, 600], [1, 0]);
-  const scaleEffect = useTransform(scrollY, [0, 800], [1, 1.1]);
+  const scaleEffect = useTransform(scrollY, [0, 800], [1, isMobile ? 1.05 : 1.1]);
 
   const mouseX = useSpring(0, { damping: 20, stiffness: 100 });
   const mouseY = useSpring(0, { damping: 20, stiffness: 100 });
 
   const handleMouseMove = (e) => {
+    if (isMobile) return;
     const { clientX, clientY } = e;
     const { innerWidth, innerHeight } = window;
     mouseX.set((clientX - innerWidth / 2) / 30);
@@ -25,27 +34,34 @@ export default function Hero() {
       ref={containerRef}
       onMouseMove={handleMouseMove}
       style={{
-        minHeight: '100vh',
+        minHeight: isMobile ? 'auto' : '100vh',
         display: 'flex',
         alignItems: 'center',
         position: 'relative',
-        paddingTop: '8rem',
+        paddingTop: isMobile ? '8rem' : '10rem',
+        paddingBottom: isMobile ? '4rem' : '0',
       }}
     >
-      <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '8rem', alignItems: 'center', width: '100%' }}>
+      <div style={{ 
+        display: 'grid', 
+        gridTemplateColumns: isMobile ? '1fr' : '1.2fr 1fr', 
+        gap: isMobile ? '4rem' : '8rem', 
+        alignItems: 'center', 
+        width: '100%' 
+      }}>
         
-        <motion.div style={{ position: 'relative', zIndex: 10, x: mouseX, y: mouseY }}>
+        <motion.div style={{ position: 'relative', zIndex: 10, x: isMobile ? 0 : mouseX, y: isMobile ? 0 : mouseY }}>
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1.5, ease: [0.23, 1, 0.32, 1] }}
             className="section-tag"
-            style={{ marginBottom: '3rem' }}
+            style={{ marginBottom: isMobile ? '2rem' : '3rem' }}
           >
             Software Engineer & Researcher
           </motion.div>
           
-          <h1 className="heading-xl" style={{ marginBottom: '4rem' }}>
+          <h1 className="heading-xl" style={{ marginBottom: isMobile ? '3rem' : '4rem' }}>
             Nupur <br />
             <motion.span 
               initial={{ opacity: 0, scale: 0.98 }}
@@ -63,11 +79,11 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.5, delay: 0.7 }}
             style={{ 
-              fontSize: '1.3rem', 
+              fontSize: isMobile ? '1.1rem' : '1.3rem', 
               color: 'var(--text-secondary)', 
               maxWidth: '540px', 
               lineHeight: 1.8, 
-              marginBottom: '5rem',
+              marginBottom: isMobile ? '4rem' : '5rem',
               fontFamily: 'var(--font-sans)'
             }}
           >
@@ -78,7 +94,7 @@ export default function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1.5, delay: 1 }}
-            style={{ display: 'flex', gap: '3rem', alignItems: 'center' }}
+            style={{ display: 'flex', gap: isMobile ? '2rem' : '3rem', alignItems: 'center' }}
           >
             <a href="#projects" className="btn-editorial">
               View Projects
@@ -89,18 +105,16 @@ export default function Hero() {
               rel="noopener noreferrer"
               style={{ 
                 fontFamily: 'var(--font-mono)', 
-                fontSize: '0.75rem', 
+                fontSize: '0.7rem', 
                 color: 'var(--text-primary)', 
                 textDecoration: 'none',
                 opacity: 0.6,
-                letterSpacing: '0.25em',
+                letterSpacing: '0.2em',
                 textTransform: 'uppercase',
                 borderBottom: '1px solid var(--accent-lavender)',
                 paddingBottom: '4px',
                 transition: 'opacity 0.4s ease'
               }}
-              onMouseEnter={(e) => e.target.style.opacity = 1}
-              onMouseLeave={(e) => e.target.style.opacity = 0.6}
             >
               Resume
             </a>
@@ -113,8 +127,9 @@ export default function Hero() {
             y: yParallax, 
             opacity: opacityFade,
             scale: scaleEffect,
-            x: useTransform(mouseX, x => x * -1.2),
-            y: useTransform(mouseY, y => y * -1.2)
+            x: isMobile ? 0 : useTransform(mouseX, x => x * -1.2),
+            y: isMobile ? 0 : useTransform(mouseY, y => y * -1.2),
+            order: isMobile ? -1 : 1
           }}
         >
           <div style={{ position: 'relative', width: '100%' }}>
@@ -125,11 +140,11 @@ export default function Hero() {
               }}
               transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
               style={{ 
-                position: 'absolute', top: '-15%', right: '-15%', 
-                width: '130%', height: '130%', 
+                position: 'absolute', top: '-10%', right: '-10%', 
+                width: '120%', height: '120%', 
                 background: 'radial-gradient(circle, var(--accent-lavender) 0%, transparent 70%)',
                 zIndex: 0, pointerEvents: 'none',
-                filter: 'blur(80px)'
+                filter: isMobile ? 'blur(50px)' : 'blur(80px)'
               }} 
             />
             
@@ -139,14 +154,15 @@ export default function Hero() {
               transition={{ duration: 2, ease: [0.23, 1, 0.32, 1], delay: 0.3 }}
               className="editorial-frame" 
               style={{ 
-                aspectRatio: '3.5/5', width: '100%', 
-                boxShadow: '0 60px 120px rgba(0,0,0,0.8)',
+                aspectRatio: isMobile ? '4/5' : '3.5/5', 
+                width: isMobile ? '100%' : '100%', 
+                boxShadow: '0 40px 80px rgba(0,0,0,0.8)',
                 zIndex: 2, position: 'relative',
                 borderRadius: '2px'
               }}
             >
               <motion.img 
-                whileHover={{ scale: 1.05 }}
+                whileHover={isMobile ? {} : { scale: 1.05 }}
                 transition={{ duration: 1.2, ease: [0.23, 1, 0.32, 1] }}
                 src="/NupurGhangarekar_JrTechnicalOfficer.jpg" 
                 alt="Nupur Ghangarekar" 
@@ -160,23 +176,26 @@ export default function Hero() {
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, x: 30 }}
+              initial={{ opacity: 0, x: isMobile ? 20 : 30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 1.5, delay: 1.2 }}
               style={{
-                position: 'absolute', bottom: '10%', left: '-12%',
-                padding: '2.5rem',
-                backgroundColor: 'rgba(8, 8, 8, 0.85)',
+                position: 'absolute', 
+                bottom: isMobile ? '-2rem' : '10%', 
+                left: isMobile ? 'auto' : '-12%',
+                right: isMobile ? '1rem' : 'auto',
+                padding: isMobile ? '1.5rem 2rem' : '2.5rem',
+                backgroundColor: 'rgba(8, 8, 8, 0.9)',
                 backdropFilter: 'blur(30px)',
                 border: '1px solid var(--glass-border)',
                 zIndex: 5,
                 borderRadius: '2px',
-                boxShadow: '0 30px 60px rgba(0,0,0,0.6)'
+                boxShadow: '0 20px 40px rgba(0,0,0,0.6)'
               }}
             >
-              <div style={{ width: '30px', height: '1px', background: 'var(--accent-lavender)', marginBottom: '1.2rem', opacity: 0.5 }} />
-              <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'var(--accent-lavender)', textTransform: 'uppercase', letterSpacing: '0.3em', marginBottom: '0.6rem' }}>Based in</p>
-              <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.6rem', color: 'var(--text-primary)', fontStyle: 'italic', letterSpacing: '-0.01em' }}>Mumbai, India</h3>
+              <div style={{ width: '25px', height: '1px', background: 'var(--accent-lavender)', marginBottom: '0.8rem', opacity: 0.5 }} />
+              <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'var(--accent-lavender)', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: '0.4rem' }}>Based in</p>
+              <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: isMobile ? '1.3rem' : '1.6rem', color: 'var(--text-primary)', fontStyle: 'italic', letterSpacing: '-0.01em' }}>Mumbai, India</h3>
             </motion.div>
           </div>
         </motion.div>
