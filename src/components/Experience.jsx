@@ -6,14 +6,14 @@ const experiences = [
   {
     role: 'Research Intern',
     org: 'VESIT Research Division',
-    period: '2024 — Present',
+    period: 'January 2026 — Present',
     description: 'Working on volumetric CT scan analysis and voxel-based visualization. Developed entropy-guided slice selection algorithms to improve diagnostic efficiency in high-dimensional medical imaging datasets.',
     details: ['Volumetric Analysis', 'Ray Casting', '3D Interpolation', 'Entropy Selection']
   },
   {
     role: 'Software Developer Intern',
     org: 'Zemo',
-    period: '2024',
+    period: 'December 2025- January 2026',
     description: 'Developed an automated system for certificate generation and management. Implemented dynamic PDF workflows to streamline administrative processes and reduce manual overhead.',
     details: ['Automated Systems', 'PDF Generation', 'Workflow Optimization']
   }
